@@ -100,6 +100,11 @@ class MainViewController: UIViewController {
     }
     
     func correctAnswerHandler() {
+        
+        let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+        notificationFeedbackGenerator.prepare()
+        notificationFeedbackGenerator.notificationOccurred(.success)
+        
         setAllBtnInteraction(false)
         displayAnswer()
         score += 1; currentStreak += 1
@@ -118,6 +123,11 @@ class MainViewController: UIViewController {
     }
     
     func incorrectAnswerHandler() {
+        
+        let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+        notificationFeedbackGenerator.prepare()
+        notificationFeedbackGenerator.notificationOccurred(.error)
+        
         setAllBtnInteraction(false)
         displayAnswer()
         currentStreak = 0
