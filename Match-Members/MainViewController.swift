@@ -37,6 +37,7 @@ class MainViewController: UIViewController {
     
     var timerProgress: Float = 0
     var timer: Timer?
+    var gracePeriodTimer: Timer?
     
     var isPaused = false
     var statsShow = false
@@ -68,6 +69,10 @@ class MainViewController: UIViewController {
     
         genNewImage()
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        gameEndHandler()
+    }
         
     func genNewImage () {
         
@@ -86,39 +91,50 @@ class MainViewController: UIViewController {
             nameBtnArr[i].setBackgroundImage(UIImage(named: "NameBtnBackground"), for: .normal)
         }
         
+        // Randomly pick one as key and apply the photo and labels
         let keyIndex = Int(arc4random_uniform(4))
-        
-        
         promptImage.image = UIImage(named: selectedNames[keyIndex].lowercased().replacingOccurrences(of: " ", with: ""))
-        
         for i in 0 ..< 4 {
             nameBtnArr[i].setTitle(selectedNames[i], for: .normal)
         }
         
-        names.remove(at: keyIndex)
+        // Remove the name from array
+        names = names.filter({(elem) -> Bool in
+            return elem != selectedNames[keyIndex]
+        })
+        
         correctIndex = keyIndex
     }
     
+    // --------------------- //
+    // Answer Select Handler //
+    // --------------------- //
+    
     func correctAnswerHandler() {
         
+        //Haptic Control
         let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
         notificationFeedbackGenerator.prepare()
         notificationFeedbackGenerator.notificationOccurred(.success)
         
         setAllBtnInteraction(false)
         displayAnswer()
+        
         score += 1; currentStreak += 1
         scoreLabel.text = String(score)
         if currentStreak > longestStreak {
             longestStreak = currentStreak
         }
+        
         if let timer = timer {
             timer.invalidate()
         }
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: {timer in
+        
+        gracePeriodTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: {timer in
             self.genNewImage()
             self.resetTimer()
             self.setAllBtnInteraction(true)
+            self.gracePeriodTimer = nil
         })
     }
     
@@ -130,16 +146,80 @@ class MainViewController: UIViewController {
         
         setAllBtnInteraction(false)
         displayAnswer()
+        
         currentStreak = 0
+        
         if let timer = timer {
             timer.invalidate()
         }
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: {timer in
+        
+        gracePeriodTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: {timer in
             self.genNewImage()
             self.resetTimer()
             self.setAllBtnInteraction(true)
+            self.gracePeriodTimer = nil
         })
     }
+    
+    // ----------------------------- //
+    // Game Sequence Control Routine //
+    // ----------------------------- //
+    
+    func gamePauseHandler() {
+        isPaused = true
+        
+        controlPauseBtn.setImage(UIImage(named: "Play"), for: .normal)
+        setAllBtnInteraction(false)
+        
+        UIView.animate(withDuration: 0.5) {
+            self.blurredEffectView.effect = UIBlurEffect(style: UIBlurEffect.Style.light)
+        }
+        
+        if let timer = timer {
+            timer.invalidate()
+        }
+        
+        if let gracePeriodTimer = gracePeriodTimer {
+            gracePeriodTimer.invalidate()
+            
+            // Set gracePeriodTimer to nil so the next game pause does not incorrectly trigger the call
+            self.gracePeriodTimer = nil
+            self.genNewImage()
+            timerProgress = 0
+            UIView.animate(withDuration: 0.2) {
+                self.timerBar.setProgress(self.timerProgress, animated: true)
+            }
+        }
+    }
+    
+    func gameResumeHandler() {
+        isPaused = false
+        
+        controlPauseBtn.setImage(UIImage(named: "Pause"), for: .normal)
+        setAllBtnInteraction(true)
+        
+        disableStats()
+        UIView.animate(withDuration: 0.5) {
+            self.blurredEffectView.effect = nil
+        }
+        
+        buildTimer()
+    }
+    
+    func gameEndHandler() {
+        // Reset the name list
+        names = Constants.names.map({ $0 })
+        
+        if let timer = timer {
+            timer.invalidate()
+        }
+        timerProgress = 0
+        enableStats()
+    }
+    
+    // --------------- //
+    // UI/UX Utilities //
+    // --------------- //
     
     func displayAnswer() {
         lastThreeAnswered.remove(at: 0)
@@ -154,34 +234,9 @@ class MainViewController: UIViewController {
         }
     }
     
-    func gamePauseHandler() {
-        isPaused = true
-        controlPauseBtn.setImage(UIImage(named: "Play"), for: .normal)
-        setAllBtnInteraction(false)
-        print(lastThreeAnswered)
-        
-        UIView.animate(withDuration: 0.5) {
-            self.blurredEffectView.effect = UIBlurEffect(style: UIBlurEffect.Style.light)
-        }
-        
-        if let timer = timer {
-            timer.invalidate()
-        }
-    }
-    
-    func gameResumeHandler() {
-        isPaused = false
-        controlPauseBtn.setImage(UIImage(named: "Pause"), for: .normal)
-        disableStats()
-        setAllBtnInteraction(true)
-        UIView.animate(withDuration: 0.5) {
-            self.blurredEffectView.effect = nil
-        }
-        buildTimer()
-    }
-    
     func enableStats() {
         statsShow = true
+        
         updateStats()
         UIView.animate(withDuration: 0.3) {
             self.statsStack.alpha = 1
@@ -190,6 +245,7 @@ class MainViewController: UIViewController {
     
     func disableStats() {
         statsShow = false
+        
         UIView.animate(withDuration: 0.3) {
             self.statsStack.alpha = 0
         }
@@ -200,15 +256,6 @@ class MainViewController: UIViewController {
         for i in 0..<3 {
             statsLastNamesArr[i].text = lastThreeAnswered[i]
         }
-    }
-    
-    func gameEndHandler() {
-        if let timer = timer {
-            timer.invalidate()
-        }
-        names = Constants.names.map({ $0 })
-        timerProgress = 0
-        enableStats()
     }
     
     func resetTimer() {
@@ -227,9 +274,11 @@ class MainViewController: UIViewController {
     func buildTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { timer in
             self.timerProgress += 0.2
+            
             UIView.animate(withDuration: 0.2) {
                 self.timerBar.setProgress(self.timerProgress, animated: true)
             }
+            
             if self.timerProgress == 1 {
                 timer.invalidate()
                 self.incorrectAnswerHandler()
@@ -242,6 +291,10 @@ class MainViewController: UIViewController {
             i.isUserInteractionEnabled = enabled
         }
     }
+    
+    // ------------------------- //
+    // UI Interactable Callbacks //
+    // ------------------------- //
 
     @IBAction func BtnOnTouchCallback(_ sender: UIButton) {
         if correctIndex == sender.tag {
