@@ -81,6 +81,17 @@
                                     <constraint firstAttribute="height" constant="12" id="Y9l-PH-PK6"/>
                                 </constraints>
                             </progressView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gXv-df-h45" userLabel="ControlPause">
+                                <rect key="frame" x="355" y="25" width="39" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="39" id="6V7-3N-88h"/>
+                                    <constraint firstAttribute="height" constant="41" id="fjp-k6-y3g"/>
+                                </constraints>
+                                <state key="normal" image="Pause"/>
+                                <connections>
+                                    <action selector="controlPauseCallback:" destination="MvK-ky-182" eventType="touchUpInside" id="etO-6S-DSc"/>
+                                </connections>
+                            </button>
                             <stackView opaque="NO" contentMode="scaleAspectFit" axis="vertical" distribution="fillEqually" alignment="center" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="D82-sO-XWU">
                                 <rect key="frame" x="-59" y="427" width="532" height="311"/>
                                 <subviews>
@@ -140,17 +151,12 @@
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="v20-mi-4qq"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gXv-df-h45" userLabel="ControlPause">
-                                <rect key="frame" x="355" y="20" width="39" height="41"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="39" id="6V7-3N-88h"/>
-                                    <constraint firstAttribute="height" constant="41" id="fjp-k6-y3g"/>
-                                </constraints>
-                                <state key="normal" image="Pause"/>
-                                <connections>
-                                    <action selector="controlPauseCallback:" destination="MvK-ky-182" eventType="touchUpInside" id="etO-6S-DSc"/>
-                                </connections>
-                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rps-Lk-2C5" userLabel="Score">
+                                <rect key="frame" x="192" y="17" width="30" height="58"/>
+                                <fontDescription key="fontDescription" name="GillSans-Bold" family="Gill Sans" pointSize="50"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -159,10 +165,12 @@
                             <constraint firstAttribute="trailing" secondItem="boR-72-O1j" secondAttribute="trailing" id="HsR-4k-xx0"/>
                             <constraint firstAttribute="trailing" secondItem="vFF-Wa-daz" secondAttribute="trailing" id="IyX-58-kjt"/>
                             <constraint firstItem="D82-sO-XWU" firstAttribute="top" secondItem="dc0-ED-q9u" secondAttribute="bottom" constant="30" id="LnC-im-WYE"/>
-                            <constraint firstItem="gXv-df-h45" firstAttribute="top" secondItem="xmr-lJ-JM6" secondAttribute="top" constant="20" id="Meg-Ea-CxR"/>
+                            <constraint firstItem="gXv-df-h45" firstAttribute="top" secondItem="xmr-lJ-JM6" secondAttribute="top" constant="25" id="Meg-Ea-CxR"/>
                             <constraint firstItem="vFF-Wa-daz" firstAttribute="leading" secondItem="6jP-ud-Wy3" secondAttribute="leading" id="Nts-HK-FGN"/>
                             <constraint firstItem="D82-sO-XWU" firstAttribute="centerX" secondItem="6jP-ud-Wy3" secondAttribute="centerX" id="P6s-kd-jxg"/>
+                            <constraint firstItem="Rps-Lk-2C5" firstAttribute="centerX" secondItem="6jP-ud-Wy3" secondAttribute="centerX" id="V5J-dT-MK6"/>
                             <constraint firstItem="xmr-lJ-JM6" firstAttribute="trailing" secondItem="gXv-df-h45" secondAttribute="trailing" constant="20" id="eCD-xW-0ji"/>
+                            <constraint firstItem="Rps-Lk-2C5" firstAttribute="top" secondItem="xmr-lJ-JM6" secondAttribute="top" constant="17" id="gQe-tL-rOU"/>
                             <constraint firstItem="boR-72-O1j" firstAttribute="leading" secondItem="6jP-ud-Wy3" secondAttribute="leading" id="l19-Hd-Shj"/>
                             <constraint firstItem="xmr-lJ-JM6" firstAttribute="trailing" secondItem="dc0-ED-q9u" secondAttribute="trailing" priority="900" constant="95" id="o9k-NA-aDb"/>
                             <constraint firstItem="vFF-Wa-daz" firstAttribute="top" secondItem="6jP-ud-Wy3" secondAttribute="top" id="qAQ-Zg-zCB"/>
@@ -179,6 +187,7 @@
                         <outlet property="NameBtn4" destination="cqy-cR-n4e" id="eZG-yG-YiY"/>
                         <outlet property="controlPauseBtn" destination="gXv-df-h45" id="ZFn-ml-HWw"/>
                         <outlet property="promptImage" destination="dc0-ED-q9u" id="Ejf-MN-x5K"/>
+                        <outlet property="scoreLabel" destination="Rps-Lk-2C5" id="MQw-GZ-kEC"/>
                         <outlet property="timerBar" destination="vFF-Wa-daz" id="fuz-OZ-9XG"/>
                     </connections>
                 </viewController>

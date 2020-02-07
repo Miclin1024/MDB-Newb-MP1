@@ -17,6 +17,8 @@ class MainViewController: UIViewController {
     @IBOutlet weak var NameBtn4: UIButton!
     @IBOutlet weak var timerBar: UIProgressView!
     @IBOutlet weak var controlPauseBtn: UIButton!
+    @IBOutlet weak var scoreLabel: UILabel!
+    
     var nameBtnArr: [UIButton]!
     
     var correctIndex: Int!
@@ -37,7 +39,7 @@ class MainViewController: UIViewController {
         // Set image bound
         promptImage.contentMode = .scaleAspectFill
         promptImage.layer.masksToBounds = true
-        promptImage.layer.cornerRadius = promptImage.frame.width / 2 - 1
+        promptImage.layer.cornerRadius = promptImage.frame.width / 2
     
         genNewImage()
     }
@@ -84,6 +86,7 @@ class MainViewController: UIViewController {
         setAllBtnInteraction(false)
         displayAnswer()
         score += 1; currentStreak += 1
+        scoreLabel.text = String(score)
         if currentStreak > longestStreak {
             longestStreak = currentStreak
         }
