@@ -26,7 +26,7 @@ class MainViewController: UIViewController {
     
     var nameBtnArr: [UIButton]!
     var statsLastNamesArr: [UILabel]!
-    var lastThreeAnswered: [String] = []
+    var lastThreeAnswered: [String] = ["", "", ""]
     let blurredEffectView = UIVisualEffectView(effect: nil)
     
     var correctIndex: Int!
@@ -64,7 +64,7 @@ class MainViewController: UIViewController {
         // Set image bound
         promptImage.contentMode = .scaleAspectFill
         promptImage.layer.masksToBounds = true
-        promptImage.layer.cornerRadius = promptImage.frame.width / 2
+        promptImage.layer.cornerRadius = 65
     
         genNewImage()
     }
@@ -132,9 +132,7 @@ class MainViewController: UIViewController {
     }
     
     func displayAnswer() {
-        if lastThreeAnswered.count >= 3 {
-            lastThreeAnswered.remove(at: 0)
-        }
+        lastThreeAnswered.remove(at: 0)
         lastThreeAnswered.append(nameBtnArr[correctIndex].titleLabel?.text! ?? "")
         
         for i in 0..<4 {
@@ -174,6 +172,7 @@ class MainViewController: UIViewController {
     
     func enableStats() {
         statsShow = true
+        updateStats()
         UIView.animate(withDuration: 0.3) {
             self.statsStack.alpha = 1
         }
@@ -186,11 +185,20 @@ class MainViewController: UIViewController {
         }
     }
     
+    func updateStats() {
+        longestStreakLabel.text = String(longestStreak)
+        for i in 0..<3 {
+            statsLastNamesArr[i].text = lastThreeAnswered[i]
+        }
+    }
+    
     func gameEndHandler() {
         if let timer = timer {
             timer.invalidate()
         }
+        names = Constants.names.map({ $0 })
         timerProgress = 0
+        enableStats()
     }
     
     func resetTimer() {
