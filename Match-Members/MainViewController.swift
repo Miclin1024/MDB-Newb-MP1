@@ -17,6 +17,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var NameBtn4: UIButton!
     @IBOutlet weak var timerBar: UIProgressView!
     @IBOutlet weak var controlPauseBtn: UIButton!
+    var nameBtnArr: [UIButton]!
     
     var correctIndex: Int!
     var names = Constants.names.map({ $0 })
@@ -48,7 +49,7 @@ class MainViewController: UIViewController {
         }
         
         
-        let nameBtnArr: [UIButton] = [
+        nameBtnArr = [
             NameBtn1,
             NameBtn2,
             NameBtn3,
@@ -59,10 +60,11 @@ class MainViewController: UIViewController {
         
         // Select 4 different names
         var randNames = names.map({ $0 })
-        for _ in 0 ..< 4 {
+        for i in 0 ..< 4 {
             let randomIndex = Int(arc4random_uniform(UInt32(randNames.count)))
             selectedNames.append(randNames[randomIndex])
             randNames.remove(at: randomIndex)
+            nameBtnArr[i].setBackgroundImage(UIImage(named: "NameBtnBackground"), for: .normal)
         }
         
         let keyIndex = Int(arc4random_uniform(4))
@@ -79,33 +81,54 @@ class MainViewController: UIViewController {
     }
     
     func correctAnswerHandler() {
-        print("correct")
+        setAllBtnInteraction(false)
+        displayAnswer()
         score += 1; currentStreak += 1
         if currentStreak > longestStreak {
             longestStreak = currentStreak
         }
-        genNewImage()
-        resetTimer()
+        if let timer = timer {
+            timer.invalidate()
+        }
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: {timer in
+            self.genNewImage()
+            self.resetTimer()
+            self.setAllBtnInteraction(true)
+        })
     }
     
     func incorrectAnswerHandler() {
-        print("wrong")
+        setAllBtnInteraction(false)
+        displayAnswer()
         currentStreak = 0
-        genNewImage()
-        resetTimer()
+        if let timer = timer {
+            timer.invalidate()
+        }
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: {timer in
+            self.genNewImage()
+            self.resetTimer()
+            self.setAllBtnInteraction(true)
+        })
     }
     
     func displayAnswer() {
+        nameBtnArr[correctIndex].setBackgroundImage(UIImage(named: "Correct"), for: .normal)
         
+        nameBtnArr.remove(at: correctIndex)
+        for i in nameBtnArr {
+            i.setBackgroundImage(UIImage(named: "Wrong"), for: .normal)
+        }
     }
     
     func gamePauseHandler() {
+        setAllBtnInteraction(false)
         if let timer = timer {
             timer.invalidate()
         }
     }
     
-    func gameRestartHandler() {
+    func gameResumeHandler() {
+        setAllBtnInteraction(true)
         buildTimer()
     }
     
@@ -141,6 +164,12 @@ class MainViewController: UIViewController {
             }
         })
     }
+    
+    func setAllBtnInteraction(_ enabled: Bool) {
+        for i in nameBtnArr {
+            i.isUserInteractionEnabled = enabled
+        }
+    }
 
     @IBAction func BtnOnTouchCallback(_ sender: UIButton) {
         if correctIndex == sender.tag {
@@ -154,7 +183,7 @@ class MainViewController: UIViewController {
         if isPaused {
             isPaused = false
             controlPauseBtn.setImage(UIImage(named: "Pause"), for: .normal)
-            gameRestartHandler()
+            gameResumeHandler()
         } else {
             isPaused = true
             controlPauseBtn.setImage(UIImage(named: "Play"), for: .normal)
