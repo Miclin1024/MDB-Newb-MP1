@@ -18,38 +18,31 @@ class MainViewController: UIViewController {
     @IBOutlet weak var timerBar: UIProgressView!
     @IBOutlet weak var controlPauseBtn: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var statsStack: UIStackView!
+    @IBOutlet weak var longestStreakLabel: UILabel!
+    @IBOutlet weak var lastNames1: UILabel!
+    @IBOutlet weak var lastNames2: UILabel!
+    @IBOutlet weak var lastNames3: UILabel!
     
     var nameBtnArr: [UIButton]!
+    var statsLastNamesArr: [UILabel]!
+    var lastThreeAnswered: [String] = []
+    let blurredEffectView = UIVisualEffectView(effect: nil)
     
     var correctIndex: Int!
     var names = Constants.names.map({ $0 })
-    var score = 0
-    var currentStreak = 0
-    var longestStreak = 0
+    var score: Int!
+    var currentStreak: Int!
+    var longestStreak: Int!
     
     var timerProgress: Float = 0
     var timer: Timer?
     
     var isPaused = false
+    var statsShow = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        resetTimer()
-        // Set image bound
-        promptImage.contentMode = .scaleAspectFill
-        promptImage.layer.masksToBounds = true
-        promptImage.layer.cornerRadius = promptImage.frame.width / 2
-    
-        genNewImage()
-    }
-    
-    func genNewImage () {
-        
-        if names.count <= 4{
-            gameEndHandler()
-        }
-        
         
         nameBtnArr = [
             NameBtn1,
@@ -57,6 +50,30 @@ class MainViewController: UIViewController {
             NameBtn3,
             NameBtn4
         ]
+        
+        statsLastNamesArr = [
+            lastNames1,
+            lastNames2,
+            lastNames3
+        ]
+        
+        resetTimer()
+        blurredEffectView.frame = view.bounds
+        blurredEffectView.isUserInteractionEnabled = false
+        view.insertSubview(blurredEffectView, at: 5)
+        // Set image bound
+        promptImage.contentMode = .scaleAspectFill
+        promptImage.layer.masksToBounds = true
+        promptImage.layer.cornerRadius = promptImage.frame.width / 2
+    
+        genNewImage()
+    }
+        
+    func genNewImage () {
+        
+        if names.count <= 4{
+            gameEndHandler()
+        }
         
         var selectedNames: [String] = []
         
@@ -115,24 +132,58 @@ class MainViewController: UIViewController {
     }
     
     func displayAnswer() {
-        nameBtnArr[correctIndex].setBackgroundImage(UIImage(named: "Correct"), for: .normal)
+        if lastThreeAnswered.count >= 3 {
+            lastThreeAnswered.remove(at: 0)
+        }
+        lastThreeAnswered.append(nameBtnArr[correctIndex].titleLabel?.text! ?? "")
         
-        nameBtnArr.remove(at: correctIndex)
-        for i in nameBtnArr {
-            i.setBackgroundImage(UIImage(named: "Wrong"), for: .normal)
+        for i in 0..<4 {
+            if i != correctIndex {
+                nameBtnArr[i].setBackgroundImage(UIImage(named: "Wrong"), for: .normal)
+            } else {
+                nameBtnArr[i].setBackgroundImage(UIImage(named: "Correct"), for: .normal)
+            }
         }
     }
     
     func gamePauseHandler() {
+        isPaused = true
+        controlPauseBtn.setImage(UIImage(named: "Play"), for: .normal)
         setAllBtnInteraction(false)
+        print(lastThreeAnswered)
+        
+        UIView.animate(withDuration: 0.5) {
+            self.blurredEffectView.effect = UIBlurEffect(style: UIBlurEffect.Style.light)
+        }
+        
         if let timer = timer {
             timer.invalidate()
         }
     }
     
     func gameResumeHandler() {
+        isPaused = false
+        controlPauseBtn.setImage(UIImage(named: "Pause"), for: .normal)
+        disableStats()
         setAllBtnInteraction(true)
+        UIView.animate(withDuration: 0.5) {
+            self.blurredEffectView.effect = nil
+        }
         buildTimer()
+    }
+    
+    func enableStats() {
+        statsShow = true
+        UIView.animate(withDuration: 0.3) {
+            self.statsStack.alpha = 1
+        }
+    }
+    
+    func disableStats() {
+        statsShow = false
+        UIView.animate(withDuration: 0.3) {
+            self.statsStack.alpha = 0
+        }
     }
     
     func gameEndHandler() {
@@ -182,14 +233,20 @@ class MainViewController: UIViewController {
         }
     }
     
-    @IBAction func controlPauseCallback(_ sender: UIButton) {
-        if isPaused {
-            isPaused = false
-            controlPauseBtn.setImage(UIImage(named: "Pause"), for: .normal)
+    @IBAction func controlStatsCallback(_ sender: Any) {
+        if statsShow {
+            disableStats()
             gameResumeHandler()
         } else {
-            isPaused = true
-            controlPauseBtn.setImage(UIImage(named: "Play"), for: .normal)
+            gamePauseHandler()
+            enableStats()
+        }
+    }
+    
+    @IBAction func controlPauseCallback(_ sender: UIButton) {
+        if isPaused {
+            gameResumeHandler()
+        } else {
             gamePauseHandler()
         }
     }

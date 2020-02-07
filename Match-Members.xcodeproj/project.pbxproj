@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A255A9623ED3FBA0040F5C3 /* StatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A255A9523ED3FBA0040F5C3 /* StatsViewController.swift */; };
 		1AAB28CF23EB59FD000D91D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB28CE23EB59FD000D91D5 /* AppDelegate.swift */; };
 		1AAB28D123EB59FD000D91D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB28D023EB59FD000D91D5 /* SceneDelegate.swift */; };
 		1AAB28D323EB59FD000D91D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB28D223EB59FD000D91D5 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A255A9523ED3FBA0040F5C3 /* StatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
 		1AAB28CB23EB59FD000D91D5 /* Match-Members.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Match-Members.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AAB28CE23EB59FD000D91D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1AAB28D023EB59FD000D91D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				1AAB28CE23EB59FD000D91D5 /* AppDelegate.swift */,
 				1AAB28E223EB78C8000D91D5 /* StartViewController.swift */,
 				1AAB28E623EB7CD5000D91D5 /* MainViewController.swift */,
+				1A255A9523ED3FBA0040F5C3 /* StatsViewController.swift */,
 				1AAB28E823EBCABC000D91D5 /* Constants.swift */,
 				1AAB28D023EB59FD000D91D5 /* SceneDelegate.swift */,
 				1AAB28D223EB59FD000D91D5 /* ViewController.swift */,
@@ -151,6 +154,7 @@
 				1AAB28CF23EB59FD000D91D5 /* AppDelegate.swift in Sources */,
 				1AAB28D123EB59FD000D91D5 /* SceneDelegate.swift in Sources */,
 				1AAB28E323EB78C8000D91D5 /* StartViewController.swift in Sources */,
+				1A255A9623ED3FBA0040F5C3 /* StatsViewController.swift in Sources */,
 				1AAB28E723EB7CD5000D91D5 /* MainViewController.swift in Sources */,
 				1AAB28E923EBCABC000D91D5 /* Constants.swift in Sources */,
 			);

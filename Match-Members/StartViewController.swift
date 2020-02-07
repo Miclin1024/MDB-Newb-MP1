@@ -16,6 +16,15 @@ class StartViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destVC = segue.destination as? MainViewController, segue.identifier == "StartSequence" {
+            destVC.score = 0
+            destVC.names = Constants.names.map({ $0 })
+            destVC.currentStreak = 0
+            destVC.longestStreak = 0
+        }
+    }
+    
     @IBAction func StartBtn(_ sender: Any) {
         performSegue(withIdentifier: "StartSequence", sender: self)
     }
